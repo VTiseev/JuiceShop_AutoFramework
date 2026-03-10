@@ -1,0 +1,15 @@
+# Игнорируем виртуальное окружение
+.venv/
+venv/
+
+# Игнорируем системный кэш Питона и Pytest
+__pycache__/
+.pytest_cache/
+
+# Игнорируем настройки IDE (PyCharm/VS Code)
+.idea/
+.vscode/
+
+# Игнорируем папки с отчетами Allure
+allure-results/
+allure-report/
