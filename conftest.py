@@ -1,18 +1,30 @@
 import pytest
+from playwright.sync_api import sync_playwright
 
-# ==========================================
-# 🌍 Глобальные переменные (Настройки стенда)
-# ==========================================
-# Адрес публичного тестового стенда Juice Shop
-BASE_URL = "https://juice-shop.herokuapp.com"
+# Глобальный URL нашего тестового стенда
+BASE_URL = "http://localhost:3000"
+
 
 @pytest.fixture(scope="session")
 def base_url():
-    """
-    Фикстура, которая возвращает базовый URL.
-    scope="session" означает, что она создается один раз на весь запуск тестов.
-    """
+    """Возвращает базовый URL стенда."""
     return BASE_URL
 
-# Позже мы добавим сюда фикстуры для запуска браузера (Playwright)
-# и настройки API-клиента.
+
+@pytest.fixture(scope="function")
+def page():
+    """
+    Фикстура для UI-тестов.
+    Открывает браузер перед тестом и закрывает после (Preconditions / Postconditions).
+    scope="function" означает, что для каждого теста будет новый чистый браузер.
+    """
+    with sync_playwright() as p:
+        # Запускаем Chromium. headless=False позволяет нам видеть, как браузер кликает
+        browser = p.chromium.launch(headless=False, slow_mo=500)
+        context = browser.new_context()
+        page = context.new_page()
+
+        yield page  # Передаем страницу в тест (здесь тест выполняется)
+
+        # Postcondition: закрываем браузер после теста
+        browser.close()
